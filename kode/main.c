@@ -23,6 +23,7 @@ int main(int argc, char* argv[])
     memcpy(salt, input_hash, 12);
     //printf("Salt from hash = %s\n", salt);
 
+    //printf("The salt is:%s\n", salt);
   
     //Åpner filen
     FILE *ftpr = fopen("smalldict.txt", "r");
@@ -34,9 +35,9 @@ int main(int argc, char* argv[])
 
     //Starten av brute force med dictionary
     printf("Searching for hash: %s\n", input_hash);
-    while(fgets(str, 39, ftpr) != NULL) 
+    while(fgets(str, 1000, ftpr) != NULL) 
     {
-    
+        
         char* encrypted=crypt(str,salt);
         //printf("%s\n", encrypted);
 
@@ -46,6 +47,8 @@ int main(int argc, char* argv[])
         if(strcmp(compareEncrypted, input_hash) == 0)
         {
             printf("Found hash: %s\n", encrypted);
+            printf("The password is: %s\n", str);
+            break;
         }
         
     }
