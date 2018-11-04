@@ -3,6 +3,8 @@
 #include <crypt.h>
 #include <string.h>
 
+char saltchars[]="abcdefghikjlmnopqrstuvWxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
+
 int main(int argc, char* argv[])
 {
     //Sjekk om argumenter er korrekt
@@ -26,7 +28,7 @@ int main(int argc, char* argv[])
     //printf("The salt is:%s\n", salt);
   
     //Åpner filen
-    FILE *ftpr = fopen("smalldict.txt", "r");
+    FILE *ftpr = fopen("dictionary.txt", "r");
     if(!ftpr)
     {
         printf("Error, cannot open file..\n");
@@ -34,9 +36,14 @@ int main(int argc, char* argv[])
     }
 
     //Starten av brute force med dictionary
-    printf("Searching for hash: %s\n", input_hash);
+    printf("Searching for password in dictionary\n");
     while(fgets(str, 1000, ftpr) != NULL) 
     {
+        int length = strlen(str);
+        if(str[length-1] == '\n')
+        {
+            str[length-1] = '\0';
+        }
         
         char* encrypted=crypt(str,salt);
         //printf("%s\n", encrypted);
