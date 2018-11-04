@@ -10,24 +10,20 @@ int main(int argc, char* argv[])
     //Sjekk om argumenter er korrekt
     if(argc != 2)
     {
-        printf("Argumentet needed");
+        printf("To use this program you need to input a hash value as second parameter");
         exit(1);
     }
 
-    char str[1000];
+    char password[1000];
 
     //input_hash er hash verdien som blir gitt ved input
     char *input_hash = argv[1];
     //Så mye som skal lagres i salt
     char salt[16];
     
-    //Trimmer input_hash til saltet og printer som sjekk
+    //Kopierer over salt fra input_hash
     memcpy(salt, input_hash, 12);
-    //printf("Salt from hash = %s\n", salt);
-
-    //printf("The salt is:%s\n", salt);
   
-    //Åpner filen
     FILE *ftpr = fopen("dictionary.txt", "r");
     if(!ftpr)
     {
@@ -35,31 +31,36 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    //Starten av brute force med dictionary
+    //Starten av dictionary attack
     printf("Searching for password in dictionary\n");
-    while(fgets(str, 1000, ftpr) != NULL) 
+    while(fgets(password, 1000, ftpr) != NULL) 
     {
-        int length = strlen(str);
-        if(str[length-1] == '\n')
+        int length = strlen(password);
+        //Gjør om alle \n verdier til en null terminator
+        if(password[length-1] == '\n')
         {
-            str[length-1] = '\0';
+            password[length-1] = '\0';
         }
         
-        char* encrypted=crypt(str,salt);
-        //printf("%s\n", encrypted);
-
+        char* encrypted=crypt(password,salt);
         char* compareEncrypted = encrypted;
-
 
         if(strcmp(compareEncrypted, input_hash) == 0)
         {
             printf("Found hash: %s\n", encrypted);
-            printf("The password is: %s\n", str);
-            break;
+            printf("The password is: %s\n", password);
+            exit(1);
         }
         
     }
 
     fclose(ftpr);
+
+    printf("Password was not found in dictionary.\n");
+    printf("Want to decide password length?");
+
+
+    
+
     return 0;
 }
