@@ -8,6 +8,7 @@ static const int valid_chars_size = sizeof(valid_chars - 1);
 
 FILE *openfile(char* filename, char* mode);
 
+
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -53,9 +54,6 @@ int main(int argc, char* argv[])
     printf("Want to decide password length?\n");
 
     //Starter brute forcing 
-
-
-
 
     return 0;
 }
