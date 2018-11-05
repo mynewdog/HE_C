@@ -3,6 +3,7 @@
 #include <crypt.h>
 #include <string.h>
 #include "include/functions.h"
+#define MAX_PASSWORD_LENGTH 1000
 
 //Finne ut en måte å bruke argv[3]
 
@@ -21,7 +22,7 @@ FILE *openfile(char* filename, char* mode)
     return file;
 }
 
-//Compare sammenligner 
+//Compare sammenligner et passord fra dictionary som blir kryptert og deretter sammenlignet med hash value
 
 int compare(char *password, char *salt, char *input_hash)
 {
@@ -40,8 +41,25 @@ int compare(char *password, char *salt, char *input_hash)
 
 void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash)
 {
-    //gjøre om til en for loop
-    while(fgets(password, 1000, dictionary) != NULL) 
+    /*gjøre om til en for loop for å kunne bruke openMP (?)
+        pseudo 
+        
+        printf("dict attack");
+        fseek(dictionary, 0, SEEK_END);
+        int bufsize = ftell(dictionary);
+        printf("%i", bufsize);
+
+     
+            for(int i = 0; i < bufsize ; i++) 
+            {
+                int length = strlen(password);
+                if(password[length-1] == '\n') { password[length-1] = '\0';}
+                compare(password, salt, input_hash);
+            }
+        
+        */
+        
+    while(fgets(password, MAX_PASSWORD_LENGTH, dictionary) != NULL) 
     {
         int length = strlen(password);
         //Omgjør alle \n til null terminatorer 
@@ -52,4 +70,6 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
 
         compare(password, salt, input_hash);
     }
+    
+    
 }
