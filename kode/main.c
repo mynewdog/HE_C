@@ -2,12 +2,19 @@
 #include <stdlib.h>
 #include <crypt.h>
 #include <string.h>
+#include "include/functions.h"
 
 //Eventuelt sette inn valid_chars i en .h fil
-static const char valid_chars[] = "abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
-static const int valid_char_length = sizeof(valid_chars - 1);
+//static const char valid_chars[] = "abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
+//static const int valid_char_length = sizeof(valid_chars - 1);
+
 
 /*
+
+Sette opp struct og bruke eks data.input_hash = argv[1]
+
+HUSK PÅ Å FREE VED SLUTT
+
 typedef struct data
 {
     
@@ -18,10 +25,6 @@ typedef struct data
 };
 */
 
-FILE *openfile(char* filename, char *mode);
-int compare(char *password, char *salt, char *input_hash);
-void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash);
-
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -29,8 +32,6 @@ int main(int argc, char* argv[])
         printf("To use this program you need to input a hash value as second parameter\n");
         exit(1);
     }
-
-    //lage struct for password og salt??
 
     char password[1000];
     char *input_hash = argv[1];
@@ -55,47 +56,3 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-FILE *openfile(char* filename, char* mode)
-{
-    FILE *file;
-
-    file = fopen(filename, mode);
-    if(!file)
-    {
-        printf("Error, cannot open file..\n");
-        exit(1);
-    }
-
-    return file;
-}
-
-int compare(char *password, char *salt, char *input_hash)
-{
-     char* encrypted_password = crypt(password,salt);
-     char* compareEncrypted = encrypted_password;
-
-        if(strcmp(compareEncrypted, input_hash) == 0)
-        {
-            printf("Found hash: %s\n", encrypted_password);
-            printf("The password is: %s\n", password);
-            exit(1);
-        }
-    return 0;
-}
-
-void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash)
-{
-    //gjøre om til en for loop
-    while(fgets(password, 1000, dictionary) != NULL) 
-    {
-        int length = strlen(password);
-        //Omgjør alle \n til null terminatorer 
-        if(password[length-1] == '\n')
-        {
-            password[length-1] = '\0';
-        }
-
-        compare(password, salt, input_hash);
-    }
-
-}
