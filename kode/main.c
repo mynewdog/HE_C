@@ -85,11 +85,11 @@ int compare(char *password, char *salt, char *input_hash)
 
 void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash)
 {
-
+    //gjøre om til en for loop
     while(fgets(password, 1000, dictionary) != NULL) 
     {
         int length = strlen(password);
-        //Omgjør alle \n til null terminatorer
+        //Omgjør alle \n til null terminatorer 
         if(password[length-1] == '\n')
         {
             password[length-1] = '\0';
