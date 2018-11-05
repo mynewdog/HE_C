@@ -3,7 +3,8 @@
 #include <crypt.h>
 #include <string.h>
 
-char saltchars[]="abcdefghikjlmnopqrstuvWxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
+static const char valid_chars[]="abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
+static const int valid_chars_size = sizeof(valid_chars - 1);
 
 FILE *openfile(char* filename, char* mode);
 
@@ -11,7 +12,7 @@ int main(int argc, char* argv[])
 {
     if(argc != 2)
     {
-        printf("To use this program you need to input a hash value as second parameter");
+        printf("To use this program you need to input a hash value as second parameter\n");
         exit(1);
     }
 
@@ -49,7 +50,12 @@ int main(int argc, char* argv[])
     fclose(dictionary);
 
     printf("Password was not found in dictionary.\n");
-    printf("Want to decide password length?");
+    printf("Want to decide password length?\n");
+
+    //Starter brute forcing 
+
+
+
 
     return 0;
 }
