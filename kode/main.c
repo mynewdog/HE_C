@@ -3,10 +3,22 @@
 #include <crypt.h>
 #include <string.h>
 
+//Eventuelt sette inn valid_chars i en .h fil
 static const char valid_chars[] = "abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
 static const int valid_char_length = sizeof(valid_chars - 1);
 
-FILE *openfile(char* filename, char* mode);
+/*
+typedef struct data
+{
+    
+    char salt[16];
+    char password[1000];
+    char input_hash;
+
+};
+*/
+
+FILE *openfile(char* filename, char *mode);
 int compare(char *password, char *salt, char *input_hash);
 void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash);
 
@@ -18,6 +30,8 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
+    //lage struct for password og salt??
+
     char password[1000];
     char *input_hash = argv[1];
     char salt[16];
@@ -27,12 +41,16 @@ int main(int argc, char* argv[])
   
     FILE* dictionary = openfile("crypto/dictionary.txt", "r");
 
+
     //Starter dictionary attack som tar i bruk compare funksjonen
+    printf("Searching for password in dictionary file..\n");
+
     dictionary_attack(password, dictionary, salt, input_hash);
+
     fclose(dictionary);
 
     printf("Password was not found in dictionary.\n");
-    printf("Want to decide password length?\n");
+    printf("\n");
 
     return 0;
 }
@@ -67,11 +85,11 @@ int compare(char *password, char *salt, char *input_hash)
 
 void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash)
 {
-    printf("Searching for password in dictionary\n");
+
     while(fgets(password, 1000, dictionary) != NULL) 
     {
         int length = strlen(password);
-
+        //Omgjør alle \n til null terminatorer
         if(password[length-1] == '\n')
         {
             password[length-1] = '\0';
@@ -79,4 +97,5 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
 
         compare(password, salt, input_hash);
     }
+
 }
