@@ -3,11 +3,12 @@
 #include <crypt.h>
 #include <string.h>
 
-static const char valid_chars[]="abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
-static const int valid_chars_size = sizeof(valid_chars - 1);
+static const char valid_chars[] = "abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
+static const int valid_char_length = sizeof(valid_chars - 1);
 
 FILE *openfile(char* filename, char* mode);
-
+int compare(char *password, char *salt, char *input_hash);
+void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash);
 
 int main(int argc, char* argv[])
 {
@@ -26,34 +27,12 @@ int main(int argc, char* argv[])
   
     FILE* dictionary = openfile("crypto/dictionary.txt", "r");
 
-    //Starten av dictionary attack
-
-    printf("Searching for password in dictionary\n");
-    while(fgets(password, 1000, dictionary) != NULL) 
-    {
-        int length = strlen(password);
-        if(password[length-1] == '\n')
-        {
-            password[length-1] = '\0';
-        }
-        
-        char* encrypted_password = crypt(password,salt);
-        char* compareEncrypted = encrypted_password;
-
-        if(strcmp(compareEncrypted, input_hash) == 0)
-        {
-            printf("Found hash: %s\n", encrypted_password);
-            printf("The password is: %s\n", password);
-            exit(1);
-        }
-        
-    }
+    //Starter dictionary attack som tar i bruk compare funksjonen
+    dictionary_attack(password, dictionary, salt, input_hash);
     fclose(dictionary);
 
     printf("Password was not found in dictionary.\n");
     printf("Want to decide password length?\n");
-
-    //Starter brute forcing 
 
     return 0;
 }
@@ -72,3 +51,32 @@ FILE *openfile(char* filename, char* mode)
     return file;
 }
 
+int compare(char *password, char *salt, char *input_hash)
+{
+     char* encrypted_password = crypt(password,salt);
+     char* compareEncrypted = encrypted_password;
+
+        if(strcmp(compareEncrypted, input_hash) == 0)
+        {
+            printf("Found hash: %s\n", encrypted_password);
+            printf("The password is: %s\n", password);
+            exit(1);
+        }
+    return 0;
+}
+
+void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash)
+{
+    printf("Searching for password in dictionary\n");
+    while(fgets(password, 1000, dictionary) != NULL) 
+    {
+        int length = strlen(password);
+
+        if(password[length-1] == '\n')
+        {
+            password[length-1] = '\0';
+        }
+
+        compare(password, salt, input_hash);
+    }
+}
