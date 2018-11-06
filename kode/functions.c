@@ -5,7 +5,7 @@
 #include "include/functions.h"
 #define MAX_PASSWORD_LENGTH 1000
 
-//Finne ut en måte å bruke argv[3]
+/* Åpner filen og sørger for at det faktisk finnes en fil */
 
 FILE *openfile(char* filename, char* mode)
 {
@@ -17,12 +17,12 @@ FILE *openfile(char* filename, char* mode)
         printf("Error, cannot open file..\n");
         exit(1);
     }
-    //Finne måte å returnere størrelsen så jeg kan bruke denne i dictionary_attack
-
+    
     return file;
 }
 
-//Compare sammenligner et passord fra dictionary som blir kryptert og deretter sammenlignet med hash value
+/* Compare sammenligner et passord fra dictionary som blir 
+   kryptert og deretter sammenligner med hash value */ 
 
 int compare(char *password, char *salt, char *input_hash)
 {
@@ -41,28 +41,14 @@ int compare(char *password, char *salt, char *input_hash)
 
 void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash)
 {
-    /*gjøre om til en for loop for å kunne bruke openMP (?)
-        pseudo 
-        
-        printf("dict attack");
-        fseek(dictionary, 0, SEEK_END);
-        int bufsize = ftell(dictionary);
-        printf("%i", bufsize);
 
-     
-            for(int i = 0; i < bufsize ; i++) 
-            {
-                int length = strlen(password);
-                if(password[length-1] == '\n') { password[length-1] = '\0';}
-                compare(password, salt, input_hash);
-            }
-        
-        */
-        
     while(fgets(password, MAX_PASSWORD_LENGTH, dictionary) != NULL) 
     {
         int length = strlen(password);
-        //Omgjør alle \n til null terminatorer 
+
+        /* Omgjør alle \n til null terminatorer 
+           ettersom hver linje kun skal være ett passord */
+
         if(password[length-1] == '\n')
         {
             password[length-1] = '\0';
@@ -70,6 +56,5 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
 
         compare(password, salt, input_hash);
     }
-    
     
 }

@@ -37,13 +37,13 @@ int main(int argc, char* argv[])
     char *input_hash = argv[1];
     char salt[16];
     
-    //Kopierer over salt fra input_hash
+    // Kopierer over salt fra input_hash
     memcpy(salt, input_hash, 12);
   
     FILE* dictionary = openfile("crypto/dictionary.txt", "r");
 
 
-    //Starter dictionary attack som tar i bruk compare funksjonen
+    // Starter dictionary attack som tar i bruk compare funksjonen
     printf("Searching for password in dictionary file..\n");
 
     dictionary_attack(password, dictionary, salt, input_hash);
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 
     printf("Password was not found in dictionary.\n");
     printf("\n");
-
+    
     return 0;
 }
 
