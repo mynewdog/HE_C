@@ -40,7 +40,13 @@ int main(int argc, char* argv[])
     // Kopierer over salt fra input_hash
     memcpy(salt, input_hash, 12);
   
-    FILE* dictionary = openfile("crypto/dictionary.txt", "r");
+    FILE* dictionary = fopen("crypto/dictionary.txt", "r");
+
+    if(!dictionary)
+    {
+        printf("Error, cannot open file..\n");
+        exit(1);
+    }
 
 
     // Starter dictionary attack som tar i bruk compare funksjonen
@@ -50,9 +56,10 @@ int main(int argc, char* argv[])
 
     fclose(dictionary);
 
+    // Om passordet ikke finnes i .txt så vil brute force starte opp
     printf("Password was not found in dictionary.\n");
     printf("\n");
-    
+  
     return 0;
 }
 
