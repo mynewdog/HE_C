@@ -4,7 +4,7 @@
 #include <string.h>
 #include "include/functions.h"
 
-//Eventuelt sette inn valid_chars i en .h fil
+//Eventuelt sette inn valid_chars i en .h fil - DONE
 //static const char valid_chars[] = "abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
 //static const int valid_char_length = sizeof(valid_chars - 1);
 
@@ -15,8 +15,7 @@ Sette opp struct og bruke eks data.input_hash = argv[1]
 
 HUSK PÅ Å FREE VED SLUTT
 
-typedef struct data
-{
+typedef struct {
     
     char salt[16];
     char password[1000];
@@ -33,7 +32,7 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    char password[1000];
+    char password[MAX_PASSWORD_LENGTH];
     char *input_hash = argv[1];
     char salt[16];
     
