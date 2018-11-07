@@ -4,7 +4,6 @@
 #include <string.h>
 #include "include/functions.h"
 
-
 /* Åpner filen og sørger for at det faktisk finnes en fil */
 
 FILE *openfile(char* filename, char* mode)
