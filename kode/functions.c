@@ -59,6 +59,8 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
     
 }
 
+/*
+
 char cracker(char *salt, char *input_hash, int *brute_length, char *password)
 {
     char *buffer = (char *) malloc(valid_char_length);
@@ -89,6 +91,8 @@ void brute_force(char *buffer, int index, int *brute_length, char *salt, char *i
 
    }
 }
+
+*/
 
 
 
