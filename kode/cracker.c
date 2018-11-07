@@ -44,11 +44,7 @@ int main(int argc, char* argv[])
     printf("Starting brute force attack\n");
    // printf("Enter a password length to start brute force attack \n");
 
-    //scanf("%i\n", &brute_length);
-
-    char str[] = "abc"; 
-    int n = strlen(str); 
-    permute(str, salt, input_hash, 0, n-1);
+   brute_force_attack(input_hash,salt);
 
     return 0;
 }

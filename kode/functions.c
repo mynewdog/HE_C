@@ -4,6 +4,13 @@
 #include <string.h>
 #include "include/functions.h"
 
+static const char alphabet[] =
+"abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY"
+"Z1234567890+\"#&/()=?!@$|[]|{}";
+
+
+static const int alphasize = sizeof(alphabet) - 1;
+
 /* Åpner filen og sørger for at det faktisk finnes en fil */
 
 FILE *openfile(char* filename, char* mode)
@@ -61,39 +68,44 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
     
 }
 
-/* swap funksjon for å bytte om plass */
+
+// find a password of given length
 
 
-void swap(char *x, char *y) 
-{ 
-    char temp; 
-    temp = *x; 
-    *x = *y; 
-    *y = temp; 
-} 
 
-/* Permuterer alle kombinasjoner gitt lenge for alphabetet */
+char* permutations(char *str, int index, int length, char *input_hash, char *salt)
+{
+	for (int i = 0; i < alphasize; i++) {
+		str[index] = alphabet[i];
 
-void permute(char *str, char *salt, char *input_hash, int index, int length) 
-{ 
-   int i; 
-   if (index == length) 
-   {
-     /*printer alle kombinasjoner  
-     printf("%s\n", str); 
-     */
-     compare(str, salt, input_hash); 
-   }
-   else
-   { 
-       for (i = index; i <= length; i++) 
-       { 
-          swap((str+index), (str+i)); 
-          permute(str, salt, input_hash, index+1, length); 
-          swap((str+index), (str+i));
-       } 
-   } 
-} 
+		if (index == length - 1) {
+			compare(str, salt, input_hash);
+		} else {
+			char* found = permutations(str, index+1, length, input_hash, salt);
+			if (found != NULL) {
+				return found;
+			}
+		}
+	}
+	return NULL;
+}
 
+char* brute_force_attack(char* input_hash, char* salt)
+{
+	int max_length = 32;
+	char* str = calloc(1, max_length + 1); // include space for NULL byte
+
+	// try shortest to longest possible words
+	for (int length = 1; length <= max_length; length++) {
+		memset(str, 0, max_length + 1); // fill word with NULL bytes
+		// try to find a matching password of given length
+		char *found = permutations(str, 0, length, input_hash, salt);
+		if (found != NULL) {
+			return found;
+		}
+	}
+
+	return NULL;
+}
 
 
