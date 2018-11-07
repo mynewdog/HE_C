@@ -4,26 +4,6 @@
 #include <string.h>
 #include "include/functions.h"
 
-//Eventuelt sette inn valid_chars i en .h fil - DONE
-//static const char valid_chars[] = "abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890+@£[]}";
-//static const int valid_char_length = sizeof(valid_chars - 1);
-
-
-/*
-
-Sette opp struct og bruke eks data.input_hash = argv[1]
-
-HUSK PÅ Å FREE VED SLUTT
-
-typedef struct {
-    
-    char salt[16];
-    char password[1000];
-    char input_hash;
-
-};
-*/
-
 int main(int argc, char* argv[])
 {
     if(argc != 2)
@@ -51,7 +31,8 @@ int main(int argc, char* argv[])
     // Starter dictionary attack som tar i bruk compare funksjonen
     printf("Searching for password in dictionary file..\n");
 
-    dictionary_attack(password, dictionary, salt, input_hash);
+    //Dictionary attack funker.
+   dictionary_attack(password, dictionary, salt, input_hash);
 
     fclose(dictionary);
 

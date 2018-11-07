@@ -3,7 +3,7 @@
 #include <crypt.h>
 #include <string.h>
 #include "include/functions.h"
-#define MAX_PASSWORD_LENGTH 1000
+
 
 /* Åpner filen og sørger for at det faktisk finnes en fil */
 
@@ -58,3 +58,25 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
     }
     
 }
+
+/*
+
+trenger crack(hash, salt);
+
+void brute_force(int index, int length, char *salt, char *input_hash, char *password)
+{
+    for (int i = 0; i < MAX_PASSWORD_LENGTH; i++)
+    {
+        if (index < length)
+        {
+            brute_force(index + 1, length, salt, input_hash, password);
+        }
+        else
+        {
+            compare(password, salt, input_hash);
+        }
+    }
+}
+
+*/
+
