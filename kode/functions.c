@@ -32,12 +32,14 @@ int compare(char *password, char *salt, char *input_hash)
         {
             printf("Found hash: %s\n", encrypted_password);
             printf("The password is: %s\n", password);
-            free(password);
             exit(1);
         }
     return 0;
 }
 
+/* dictionary attack som går igjennom hvert passord i filen
+   og sammenligner passordet når det blir omgjort til en hash-verdi mot input_hash 
+*/
 
 void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash)
 {
@@ -59,40 +61,39 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
     
 }
 
-/*
-
-char cracker(char *salt, char *input_hash, int *brute_length, char *password)
-{
-    char *buffer = (char *) malloc(valid_char_length);
-
-    for(int i = 0; i < brute_length; i++)
-    {
-        brute_force(buffer, 0, i, salt, input_hash, password);
-
-    }
-}
+/* swap funksjon for å bytte om plass */
 
 
+void swap(char *x, char *y) 
+{ 
+    char temp; 
+    temp = *x; 
+    *x = *y; 
+    *y = temp; 
+} 
 
-void brute_force(char *buffer, int index, int *brute_length, char *salt, char *input_hash, char *password)
-{
-    for (int i = 0; i < valid_char_length; i++)
+/* Permuterer alle kombinasjoner gitt lenge for alphabetet */
+
+void permute(char *str, char *salt, char *input_hash, int index, int length) 
+{ 
+   int i; 
+   if (index == length) 
    {
-       sprintf(buffer + index, "%c", valid_chars[i]);
-
-       if(index < brute_length)
-       {
-           brute_force(buffer, index + 1, brute_length, salt, input_hash, password);
-       }
-        else
-        {
-            compare(password, salt, input_hash);
-        }
-
+     /*printer alle kombinasjoner  
+     printf("%s\n", str); 
+     */
+     compare(str, salt, input_hash); 
    }
-}
-
-*/
+   else
+   { 
+       for (i = index; i <= length; i++) 
+       { 
+          swap((str+index), (str+i)); 
+          permute(str, salt, input_hash, index+1, length); 
+          swap((str+index), (str+i));
+       } 
+   } 
+} 
 
 
 

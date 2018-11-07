@@ -15,12 +15,13 @@ int main(int argc, char* argv[])
     char password[MAX_PASSWORD_LENGTH];
     char *input_hash = argv[1];
     char salt[16];
-    int brute_length;
-    
+
+
     // Kopierer over salt fra input_hash
     memcpy(salt, input_hash, 12);
-  
-    FILE* dictionary = fopen("crypto/dictionary.txt", "r");
+    
+    // ÅPNER FEIL DICTIONARY ATM
+    FILE* dictionary = fopen("crypto/smalldict.txt", "r");
 
     if(!dictionary)
     {
@@ -30,7 +31,7 @@ int main(int argc, char* argv[])
 
 
     // Starter dictionary attack som tar i bruk compare funksjonen
-    printf("Searching for password in dictionary file..\n");
+    printf("Searching for password in the dictionary\n");
 
     //Dictionary attack funker.
     dictionary_attack(password, dictionary, salt, input_hash);
@@ -38,12 +39,17 @@ int main(int argc, char* argv[])
     fclose(dictionary);
 
     // Om passordet ikke finnes i .txt så vil brute force starte opp
-    printf("Password was not found in dictionary.\n");
-    printf("Enter a password length to start brute force attack \n");
-
-    scanf("%i\n", &brute_length);
+    printf("Password was not found in dictionary.\n\n");
     
-  
+    printf("Starting brute force attack\n");
+   // printf("Enter a password length to start brute force attack \n");
+
+    //scanf("%i\n", &brute_length);
+
+    char str[] = "abc"; 
+    int n = strlen(str); 
+    permute(str, salt, input_hash, 0, n-1);
+
     return 0;
 }
 
