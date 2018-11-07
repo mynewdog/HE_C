@@ -32,6 +32,7 @@ int compare(char *password, char *salt, char *input_hash)
         {
             printf("Found hash: %s\n", encrypted_password);
             printf("The password is: %s\n", password);
+            free(password);
             exit(1);
         }
     return 0;
@@ -58,24 +59,36 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
     
 }
 
-/*
-
-trenger crack(hash, salt);
-
-void brute_force(int index, int length, char *salt, char *input_hash, char *password)
+char cracker(char *salt, char *input_hash, int *brute_length, char *password)
 {
-    for (int i = 0; i < MAX_PASSWORD_LENGTH; i++)
+    char *buffer = (char *) malloc(valid_char_length);
+
+    for(int i = 0; i < brute_length; i++)
     {
-        if (index < length)
-        {
-            brute_force(index + 1, length, salt, input_hash, password);
-        }
+        brute_force(buffer, 0, i, salt, input_hash, password);
+
+    }
+}
+
+
+
+void brute_force(char *buffer, int index, int *brute_length, char *salt, char *input_hash, char *password)
+{
+    for (int i = 0; i < valid_char_length; i++)
+   {
+       sprintf(buffer + index, "%c", valid_chars[i]);
+
+       if(index < brute_length)
+       {
+           brute_force(buffer, index + 1, brute_length, salt, input_hash, password);
+       }
         else
         {
             compare(password, salt, input_hash);
         }
-    }
+
+   }
 }
 
-*/
+
 
