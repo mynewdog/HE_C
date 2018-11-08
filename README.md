@@ -1,82 +1,57 @@
-# Hjemmeeksamen i C programmering
+# Hjemmeeksamen i C programmering - Erik Valderhaug
 
-#### Cracking passwords
-We regularly read about large caches of passwords being leaked on the internet.
-Such a leak happens in two steps: First, a cracker needs to access the password
-file. Such files are only accessible by root users, so this requires full access to the
-system. But even when you have downloaded a password file, the passwords are
-not stored in cleartext. Passwords are run through a hashing algorithm multiple
-times, to produce a result that cannot be decoded to the original password. The
-purpose of this assignment is creating a program that cracks such hashed
-passwords.
+Oppgaven var å kunne cracke MD5 passord når man har en hash-verdi.
+Alt er skrevet og kjørt under Ubuntu 18.04. I mappen vil man finne det kjørbare-programmet "password_cracker".
 
-The trick to this is in principle simple: Use the same algorithm used to hash the
-passwords on a long series of guesses. There are two ways of guessing: The
-simplest is going through a long list of common passwords, called a “dictionary”,
-and guessing each one. Many such lists are available online, and one is attached
-to this assignment. If this fails, you have to try any possible combination of the
-symbols allowed in passwords. If the possible alphabet for the password is ‘A’,’B’
-and ‘C’, and the maximum length of a password is two characters, this system
-would guess ‘A’, ’B’, ‘C’, ‘AA’, ’BA’, ‘CA’, ‘AB’, ’BB’, ‘CB’, ‘AC’, ’BC’, ‘CC’. As you can
-see, the time taken to crack such a password is proportional to O(NM) where N is
-the number selection of characters the password is selected from, and M is the
-number of characters in the password. This means the cracking will be slow for
-long passwords using a varied set of characters.
+For å kompilere:
+    Makefile brukes ved å skrive inn "make password_cracker"
+    For å fjerne object-filene skriver man inn "make clean"
 
-#### Technical details
+For å kjøre:
+    ./password_cracker 'X' (hvorav X er hash-verdien)
 
-Hashing passwords is handled by the function “crypt (3)” (“see man” 3 crypt for
-details). I have attached a small utility (crypto.c) that uses this function to hash
-passwords. Compiling this program requires using the “-lcrypt” flag to the linker.
-Use this program to create your own hashed passwords for testing the cracker.
-The hashes look like this:
-$1$OxMvna1o$M.mMB9Jy9H6YfJeet1ICc.
-It starts by a dollar sign, followed by a 1. This indicates the hashing function
-used. All passwords in this assignment will use hash function 1, MD5. You may
-play with other hash functions if you like. After the next dollar sign are eight
-character called the “salt”. These are random characters added to the password
-before encrypting. This makes sure that identical passwords do not look
-identical in the password file, and must be cracked individually. After the next
-dollar sign, is the hash itself.
 
-The goal of this assignment is making a program that lets you write on the
-command line:
-./cracker '$1$aTWHXMtg$akUOXns69Uzn44CGTLQ7S0'
-Giving the output:
-Searching for hash: $1$aTWHXMtg$akUOXns69Uzn44CGTLQ7S0
-Found password: oi
-Note the single quotes around the hash value. Bash will interpret dollar signs as
-variables unless quoted. As an alternative the program can expect a file name of
-a file where the hashes are stored one per line. I have attached one such file with
-example passwords.
 
-#### Requirements
-• The program should crack passwords hashed with the Linux “crypt 3”-
-function.
-• It should first go through a dictionary file.
-​	o Optional: Let user select dictionary file by command line
-​	parameter.
-• Next, it should guess systematically any combination of allowed
-characters.
-• Allowed characters are:
-​	_const char passchars[] =
-​	"abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
-​	Z1234567890+\"#&/()=?!@$|[]|{}";_
-• The number of characters tried should be configurable, and the code
-should support any number of characters.
-• When the password is found, it should be reported to console.
-• The code should be as efficient as possible.
+Ved bruk av Valgrind får jeg still reachable: 43 bytes in 1 blocks.
+Dette vil jeg ikke se på som en grov feil ettersom "stil reachable" ikke utgjør et
+slags problem som ekte minnelekkasjer kan forårsake. Derimot kan jeg ikke åpenhjertet 
+si at det er greit at man får "still reachable" under memory-leak checks.
 
-Advanced features (Note: These will only be considered for the highest grades.):
-• Cracking should utilise any number of CPU cores. (Note that “crypt” is not
-thread-safe, and you should use “r_crypt” for multithreaded
-implementations. See man page.
-• Cracking should work on multiple machines communicating over a
-network.
+https://stackoverflow.com/questions/3840582/still-reachable-leak-detected-by-valgrind
 
-#### Hints
-• Consider a recursive implementation of the guessing system.
-• Try with a short password and a short alphabet first, printing out the
-guesses. Then you can see if it works.
-• Do not free the string returned by “crypt”. The system handles this
-internally and it will lead to strange behaviour.
+Her er vedlagt memory-leak test:
+==5190== Memcheck, a memory error detector
+==5190== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==5190== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==5190== Command: ./password_cracker $1$abcdefgh$gINKdZR2ZOFR0hPWcRObD/
+==5190== 
+
+Cracker is now running
+--------------------------
+Starting dictionary attack
+--------------------------
+Found password: rekrut
+==5190== 
+==5190== HEAP SUMMARY:
+==5190==     in use at exit: 43 bytes in 1 blocks
+==5190==   total heap usage: 6 allocs, 5 frees, 5,729 bytes allocated
+==5190== 
+==5190== 43 bytes in 1 blocks are still reachable in loss record 1 of 1
+==5190==    at 0x4C2FA3F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5190==    by 0x4C31D84: realloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5190==    by 0x4E3D970: __md5_crypt (md5-crypt.c:319)
+==5190==    by 0x108D23: compare (in /home/osboxes/HE_C/kode/password_cracker)
+==5190==    by 0x108DBB: dictionary_attack (in /home/osboxes/HE_C/kode/password_cracker)
+==5190==    by 0x108C11: main (in /home/osboxes/HE_C/kode/password_cracker)
+==5190== 
+==5190== LEAK SUMMARY:
+==5190==    definitely lost: 0 bytes in 0 blocks
+==5190==    indirectly lost: 0 bytes in 0 blocks
+==5190==      possibly lost: 0 bytes in 0 blocks
+==5190==    still reachable: 43 bytes in 1 blocks
+==5190==         suppressed: 0 bytes in 0 blocks
+==5190== 
+==5190== For counts of detected and suppressed errors, rerun with: -v
+==5190== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+
+
