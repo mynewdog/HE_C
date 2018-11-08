@@ -13,14 +13,16 @@ int main(int argc, char *argv[])
     }
 
     char password[MAX_PASSWORD_LENGTH];
-    char *input_hash = argv[1];
-    char salt[16];
+    const char *input_hash = argv[1];
+    char *salt = malloc(sizeof(char) * SALT_LENGTH + 1);
+    salt[SALT_LENGTH] = '\0';
+    char *encrypted_password = malloc(sizeof(char));
 
     // Kopierer over salt fra input_hash
-    memcpy(salt, input_hash, 12);
+    memcpy(salt, input_hash, SALT_LENGTH);
 
-    FILE* dictionary = openfile("crypto/dictionary.txt", "r");
-   
+    FILE *dictionary = openfile("crypto/smalldict.txt", "r");
+
     /* Starter dictionary attack og hvis 
        ikke passord finnes så kjøres brute_force */
 
@@ -30,16 +32,21 @@ int main(int argc, char *argv[])
     printf("--------------------------\n");
     printf("Starting dictionary attack\n");
     printf("--------------------------\n");
-   
-    dictionary_attack(password, dictionary, salt, input_hash);
+
+    if (dictionary_attack(password, dictionary, salt, input_hash, encrypted_password) != 1)
+    {
+
+        printf("Password was not found in the dictionary.\n\n");
+        printf("---------------------------\n");
+        printf("Starting brute force attack\n");
+        printf("---------------------------\n");
+
+        brute_force_attack(input_hash, salt, encrypted_password);
+    }
+
     fclose(dictionary);
-
-    printf("Password was not found in the dictionary.\n\n");
-    printf("---------------------------\n");
-    printf("Starting brute force attack\n");
-    printf("---------------------------\n");
-
-    brute_force_attack(input_hash, salt);
+    free(salt);
+    free(encrypted_password);
 
     return 0;
 }

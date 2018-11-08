@@ -1,8 +1,8 @@
-# set compiler: g++ for C++
+#Set compiler:
 CC = gcc
 
 #Flags
-CFLAGS = -Wall -Wextra -g
+CFLAGS = -Wall -Wextra
 RFLAGS = -O3
 
 #Name of file

@@ -24,22 +24,21 @@ FILE *openfile(char *filename, char *mode)
     }
 
     return file;
-
 }
 
 /* Compare sammenligner et passord fra dictionary som blir 
    kryptert og deretter sammenligner med hash value */
 
-int compare(char *password, char *salt, char *input_hash)
+int compare(const char *password, const char *salt, const char *input_hash, char *encrypted_password)
 {
-    char *encrypted_password = crypt(password, salt);
-    char *compareEncrypted = encrypted_password;
 
-    if (strcmp(compareEncrypted, input_hash) == 0)
+    encrypted_password = crypt(password, salt);
+
+    if (strcmp(encrypted_password, input_hash) == 0)
     {
-        printf("Found hash: %s\n", encrypted_password);
-        printf("Which matches the password: %s\n", password);
-        exit(1);
+        //printf("Found hash: %s\n", encrypted_password);
+        //printf("Which matches the password: %s\n", password);
+        return 1;
     }
     return 0;
 }
@@ -47,7 +46,7 @@ int compare(char *password, char *salt, char *input_hash)
 /* Dictionary_attack som går igjennom hvert passord i filen
    og kjører compare funksjonen mot hvert passord som blir hentet inn */
 
-void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash)
+int dictionary_attack(char *password, FILE *dictionary, char *salt, const char *input_hash, char *encrypted_password)
 {
 
     while (fgets(password, MAX_PASSWORD_LENGTH, dictionary) != NULL)
@@ -62,15 +61,20 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
             password[length - 1] = '\0';
         }
 
-        compare(password, salt, input_hash);
+        if (compare(password, salt, input_hash, encrypted_password) == 1)
+        {
+            printf("Found password: %s\n", password);
+            return 1;
+        }
     }
+    return 0;
 }
 
 /* Funksjon til å generer ord rekursivt.
    Begynner med én char, sammenligner og deretter går over til to chars osv
 */
 
-char *generate_words(char *word, int index, int length, char *input_hash, char *salt)
+char *generate_words(char *word, int index, int length, const char *input_hash, char *salt, char *encrypted_password)
 {
     for (int i = 0; i < passchars_length; i++)
     {
@@ -78,11 +82,14 @@ char *generate_words(char *word, int index, int length, char *input_hash, char *
 
         if (index == length - 1)
         {
-            compare(word, salt, input_hash);
+            if (compare(word, salt, input_hash, encrypted_password) == 1)
+            {
+                return word;
+            }
         }
         else
         {
-            char *password_found = generate_words(word, index + 1, length, input_hash, salt);
+            char *password_found = generate_words(word, index + 1, length, input_hash, salt, encrypted_password);
             if (password_found != NULL)
             {
                 return password_found;
@@ -92,7 +99,7 @@ char *generate_words(char *word, int index, int length, char *input_hash, char *
     return NULL;
 }
 
-char *brute_force_attack(char *input_hash, char *salt)
+char *brute_force_attack(const char *input_hash, char *salt, char *encrypted_password)
 {
     int max_length = 32;
     char *word = calloc(1, max_length + 1);
@@ -101,12 +108,14 @@ char *brute_force_attack(char *input_hash, char *salt)
     {
         memset(word, 0, max_length + 1); // Fyller opp word med 0
 
-        char *password_found = generate_words(word, 0, length, input_hash, salt);
+        char *password_found = generate_words(word, 0, length, input_hash, salt, encrypted_password);
         if (password_found != NULL)
         {
+            printf("The password is: %s\n", password_found);
+            free(word);
             return password_found;
         }
     }
-
+    free(word);
     return NULL;
 }
