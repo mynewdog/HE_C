@@ -66,7 +66,9 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
     }
 }
 
-// Recursive character permutation
+/* Funksjon til å generer ord rekursivt.
+   Begynner med én char, sammenligner og deretter går over til to chars osv
+*/
 
 char *generate_words(char *word, int index, int length, char *input_hash, char *salt)
 {
@@ -97,7 +99,7 @@ char *brute_force_attack(char *input_hash, char *salt)
 
     for (int length = 1; length <= max_length; length++)
     {
-        memset(word, 0, max_length + 1); // fill word with NULL bytes
+        memset(word, 0, max_length + 1); // Fyller opp word med 0
 
         char *password_found = generate_words(word, 0, length, input_hash, salt);
         if (password_found != NULL)

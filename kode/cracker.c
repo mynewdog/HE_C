@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     memcpy(salt, input_hash, 12);
 
     FILE* dictionary = openfile("crypto/dictionary.txt", "r");
-
+   
     /* Starter dictionary attack og hvis 
        ikke passord finnes så kjøres brute_force */
 

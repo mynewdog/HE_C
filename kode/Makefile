@@ -2,7 +2,7 @@
 CC = gcc
 
 #Flags
-CFLAGS = -g -Wall -Wextra
+CFLAGS = -Wall -Wextra -g
 RFLAGS = -O3
 
 #Name of file
