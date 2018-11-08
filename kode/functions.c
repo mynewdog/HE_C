@@ -97,7 +97,7 @@ char *generate_words(char *word, int index, int length, const char *input_hash, 
     return NULL;
 }
 
-/* Kjører brute force */
+/* Kjører brute force. Kan konfigureres ved å endre max_length til høyere verdi*/
 
 char *brute_force_attack(const char *input_hash, char *salt, char *encrypted_password)
 {

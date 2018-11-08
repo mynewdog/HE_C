@@ -1,6 +1,7 @@
 Hjemmeeksamen C i Linux
 
-Oppgaven var å kunne cracke MD5 passord når man har en hash-verdi.
+MD5-hash $1$ password cracker.
+
 Alt er skrevet og kjørt under Ubuntu 18.04. I mappen vil man finne det kjørbare-programmet "password_cracker".
 
 For å kompilere:
