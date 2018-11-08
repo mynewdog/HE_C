@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     // Kopierer over salt fra input_hash
     memcpy(salt, input_hash, SALT_LENGTH);
 
-    FILE *dictionary = openfile("crypto/smalldict.txt", "r");
+    FILE *dictionary = openfile("crypto/dictionary.txt", "r");
 
     /* Starter dictionary attack og hvis 
        ikke passord finnes så kjøres brute_force */
