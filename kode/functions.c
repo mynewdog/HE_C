@@ -36,8 +36,6 @@ int compare(const char *password, const char *salt, const char *input_hash, char
 
     if (strcmp(encrypted_password, input_hash) == 0)
     {
-        //printf("Found hash: %s\n", encrypted_password);
-        //printf("Which matches the password: %s\n", password);
         return 1;
     }
     return 0;
@@ -98,6 +96,8 @@ char *generate_words(char *word, int index, int length, const char *input_hash, 
     }
     return NULL;
 }
+
+/* Kjører brute force */
 
 char *brute_force_attack(const char *input_hash, char *salt, char *encrypted_password)
 {
