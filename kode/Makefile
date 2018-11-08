@@ -1,4 +1,4 @@
-#Set compiler:
+#Set compiler
 CC = gcc
 
 #Flags
