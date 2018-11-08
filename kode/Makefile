@@ -19,5 +19,3 @@ functions.o: functions.c
 
 clean:
 	rm *.o $(TARGET)
-
-remake: clean $(TARGET)
