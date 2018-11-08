@@ -4,11 +4,11 @@
 #include <string.h>
 #include "include/functions.h"
 
-static const char alphabet[] =
+static const char passchars[] =
     "abcdefghikjlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY"
     "Z1234567890+\"#&/()=?!@$|[]|{}";
 
-static const int alphabet_size = sizeof(alphabet) - 1;
+static const int passchars_length = sizeof(passchars) - 1;
 
 /* Åpner filen og sørger for at det faktisk finnes en fil */
 
@@ -24,6 +24,7 @@ FILE *openfile(char *filename, char *mode)
     }
 
     return file;
+
 }
 
 /* Compare sammenligner et passord fra dictionary som blir 
@@ -44,7 +45,7 @@ int compare(char *password, char *salt, char *input_hash)
 }
 
 /* Dictionary_attack som går igjennom hvert passord i filen
-   og sammenligner passordet når det blir omgjort til en hash-verdi mot input_hash */
+   og kjører compare funksjonen mot hvert passord som blir hentet inn */
 
 void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input_hash)
 {
@@ -53,7 +54,7 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
     {
         int length = strlen(password);
 
-        /* Omgjør alle \n til null terminatorer 
+        /* Omgjør alle \n til null terminatorer for å unngå bugs
            ettersom hver linje kun skal være ett passord */
 
         if (password[length - 1] == '\n')
@@ -67,19 +68,19 @@ void dictionary_attack(char *password, FILE *dictionary, char *salt, char *input
 
 // Recursive character permutation
 
-char *permutations(char *str, int index, int length, char *input_hash, char *salt)
+char *generate_words(char *word, int index, int length, char *input_hash, char *salt)
 {
-    for (int i = 0; i < alphabet_size; i++)
+    for (int i = 0; i < passchars_length; i++)
     {
-        str[index] = alphabet[i];
+        word[index] = passchars[i];
 
         if (index == length - 1)
         {
-            compare(str, salt, input_hash);
+            compare(word, salt, input_hash);
         }
         else
         {
-            char *password_found = permutations(str, index + 1, length, input_hash, salt);
+            char *password_found = generate_words(word, index + 1, length, input_hash, salt);
             if (password_found != NULL)
             {
                 return password_found;
@@ -92,13 +93,13 @@ char *permutations(char *str, int index, int length, char *input_hash, char *sal
 char *brute_force_attack(char *input_hash, char *salt)
 {
     int max_length = 32;
-    char *str = calloc(1, max_length + 1);
+    char *word = calloc(1, max_length + 1);
 
     for (int length = 1; length <= max_length; length++)
     {
-        memset(str, 0, max_length + 1); // fill word with NULL bytes
+        memset(word, 0, max_length + 1); // fill word with NULL bytes
 
-        char *password_found = permutations(str, 0, length, input_hash, salt);
+        char *password_found = generate_words(word, 0, length, input_hash, salt);
         if (password_found != NULL)
         {
             return password_found;
